@@ -11,27 +11,22 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.modelContext) var modelContext
     @State private var path = [Person]()
-    @Query var people: [Person]
+    
+    @State private var searchText = ""
     
     var body: some View {
         NavigationStack(path: $path){
-            List {
-                ForEach(people) { person in
-                    NavigationLink(value: person) {
-                        Text(person.name)
+            PeopleView(searchString: searchText)
+                .navigationTitle("FaceFacts")
+                .navigationDestination(for: Person.self) { person in
+                    EditPersonView(person: person)
+                }
+                .toolbar {
+                    Button("Add") {
+                        addPerson()
                     }
                 }
-                .onDelete(perform: deletePeople)
-            }
-            .navigationTitle("FaceFacts")
-            .navigationDestination(for: Person.self) { person in
-                EditPersonView(person: person)
-            }
-            .toolbar {
-                Button("Add") {
-                    addPerson()
-                }
-            }
+                .searchable(text: $searchText)
         }
     }
     
@@ -41,12 +36,7 @@ struct ContentView: View {
         path.append(person)
     }
     
-    func deletePeople(at offsets: IndexSet) {
-        for offset in offsets {
-            let person = people[offset]
-            modelContext.delete(person)
-        }
-    }
+    
 }
 
 #Preview {
