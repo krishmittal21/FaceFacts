@@ -23,14 +23,14 @@ struct PeopleView: View {
         }
     }
     
-    init(searchString: String = "") {
+    init(searchString: String = "", sortOrder: [SortDescriptor<Person>] = []) {
         _people = Query(filter: #Predicate { person in // _ -> change the query iteself
             if searchString.isEmpty {
                 true
             } else {
                 person.name.localizedStandardContains(searchString)
             }
-        })
+        }, sort: sortOrder)
     }
     
     func deletePeople(at offsets: IndexSet) {
@@ -39,8 +39,4 @@ struct PeopleView: View {
             modelContext.delete(person)
         }
     }
-}
-
-#Preview {
-    PeopleView()
 }
